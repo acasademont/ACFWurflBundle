@@ -1,0 +1,4 @@
+vendor
+tests/wurfl
+.idea
+composer.lock
