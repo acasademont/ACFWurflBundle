@@ -47,7 +47,8 @@ class ACFWurflExtension extends Extension
                 ));
                 break;
             case 'apc':
-                return array('apc', array());
+            case 'apcu':
+                return array($config['type'], array());
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Invalid handler type "%s" given', $config['type']));

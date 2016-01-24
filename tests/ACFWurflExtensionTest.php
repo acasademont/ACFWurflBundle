@@ -61,6 +61,26 @@ class ACFWurflExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($container->getParameter('kernel.root_dir') . '/wurfl', $cache['params']['dir']);
     }
 
+    public function testApcuCache()
+    {
+        $config = array(
+            'wurfl_file' => __DIR__ . '/Resources/wurfl/wurfl-light.xml',
+            'match_mode'   => 'accuracy',
+            'cache' => 'apcu'
+        );
+
+        $container = $this->createCompiledContainerForConfig($config);
+
+        $this->assertInstanceOf('WURFL_Configuration_InMemoryConfig', $container->get('acf_wurfl.config'));
+        $this->assertEquals(__DIR__ . '/Resources/wurfl/wurfl-light.xml', $container->get('acf_wurfl.config')->wurflFile);
+        $this->assertEquals('accuracy', $container->get('acf_wurfl.config')->matchMode);
+        $cache = $container->get('acf_wurfl.config')->cache;
+        $this->assertEquals('apcu', $cache['provider']);
+        $cache = $container->get('acf_wurfl.config')->persistence;
+        $this->assertEquals('file', $cache['provider']);
+        $this->assertEquals($container->getParameter('kernel.root_dir') . '/wurfl', $cache['params']['dir']);
+    }
+
     public function testInvalidMatchMode()
     {
         $config = array(
