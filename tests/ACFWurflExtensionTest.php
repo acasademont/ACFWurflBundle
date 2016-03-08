@@ -20,13 +20,13 @@ class ACFWurflExtensionTest extends \PHPUnit_Framework_TestCase
     public function testDefaultConfig()
     {
         $config = array(
-            'wurfl_file' => __DIR__ . '/Resources/wurfl/wurfl-light.xml',
+            'wurfl_file' => __DIR__ . '/Resources/wurfl/wurfl_base.xml',
         );
 
         $container = $this->createCompiledContainerForConfig($config);
 
         $this->assertInstanceOf('WURFL_Configuration_InMemoryConfig', $container->get('acf_wurfl.config'));
-        $this->assertEquals(__DIR__ . '/Resources/wurfl/wurfl-light.xml', $container->get('acf_wurfl.config')->wurflFile);
+        $this->assertEquals(__DIR__ . '/Resources/wurfl/wurfl_base.xml', $container->get('acf_wurfl.config')->wurflFile);
         $this->assertEquals('performance', $container->get('acf_wurfl.config')->matchMode);
         $cache = $container->get('acf_wurfl.config')->cache;
         $this->assertEquals('file', $cache['provider']);
@@ -37,14 +37,14 @@ class ACFWurflExtensionTest extends \PHPUnit_Framework_TestCase
 
 
         $this->assertInstanceOf('WURFL_WURFLManager', $container->get('acf_wurfl'));
-        $this->assertEquals('www.wurflpro.com - 2010-02-03 10:31:00', $container->get('acf_wurfl')->getWURFLInfo()->version);
+        $this->assertEquals('www.wurflpro.com - 2010-06-03 11:55:51', $container->get('acf_wurfl')->getWURFLInfo()->version);
         $this->assertEquals('generic_web_browser', $container->get('acf_wurfl')->getDeviceForUserAgent('Mozilla/4.0')->id);
     }
 
     public function testApcCache()
     {
         $config = array(
-            'wurfl_file' => __DIR__ . '/Resources/wurfl/wurfl-light.xml',
+            'wurfl_file' => __DIR__ . '/Resources/wurfl/wurfl_base.xml',
             'match_mode'   => 'accuracy',
             'cache' => 'apc'
         );
@@ -52,7 +52,7 @@ class ACFWurflExtensionTest extends \PHPUnit_Framework_TestCase
         $container = $this->createCompiledContainerForConfig($config);
 
         $this->assertInstanceOf('WURFL_Configuration_InMemoryConfig', $container->get('acf_wurfl.config'));
-        $this->assertEquals(__DIR__ . '/Resources/wurfl/wurfl-light.xml', $container->get('acf_wurfl.config')->wurflFile);
+        $this->assertEquals(__DIR__ . '/Resources/wurfl/wurfl_base.xml', $container->get('acf_wurfl.config')->wurflFile);
         $this->assertEquals('accuracy', $container->get('acf_wurfl.config')->matchMode);
         $cache = $container->get('acf_wurfl.config')->cache;
         $this->assertEquals('apc', $cache['provider']);
@@ -64,7 +64,7 @@ class ACFWurflExtensionTest extends \PHPUnit_Framework_TestCase
     public function testApcuCache()
     {
         $config = array(
-            'wurfl_file' => __DIR__ . '/Resources/wurfl/wurfl-light.xml',
+            'wurfl_file' => __DIR__ . '/Resources/wurfl/wurfl_base.xml',
             'match_mode'   => 'accuracy',
             'cache' => 'apcu'
         );
@@ -72,7 +72,7 @@ class ACFWurflExtensionTest extends \PHPUnit_Framework_TestCase
         $container = $this->createCompiledContainerForConfig($config);
 
         $this->assertInstanceOf('WURFL_Configuration_InMemoryConfig', $container->get('acf_wurfl.config'));
-        $this->assertEquals(__DIR__ . '/Resources/wurfl/wurfl-light.xml', $container->get('acf_wurfl.config')->wurflFile);
+        $this->assertEquals(__DIR__ . '/Resources/wurfl/wurfl_base.xml', $container->get('acf_wurfl.config')->wurflFile);
         $this->assertEquals('accuracy', $container->get('acf_wurfl.config')->matchMode);
         $cache = $container->get('acf_wurfl.config')->cache;
         $this->assertEquals('apcu', $cache['provider']);
