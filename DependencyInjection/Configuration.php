@@ -34,8 +34,13 @@ class Configuration implements ConfigurationInterface
                         ->thenInvalid('The match mode has to be "performance" or "accuracy"')
                     ->end()
                 ->end()
-                ->append($this->getCacheDriverNode('persistence'))
-                ->append($this->getCacheDriverNode('cache'))
+                ->booleanNode('debug')->defaultValue('%kernel.debug%')->end()
+                ->append($this->getStorageDriverNode())
+                ->append($this->getCacheDriverNode())
+                ->arrayNode('capabilities_filter')
+                    ->prototype('scalar')->end()
+                ->end()
+                ->scalarNode('storage_path')->defaultValue('%kernel.root_dir%/wurfl')->end()
             ->end()
         ;
 
@@ -43,16 +48,14 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * Return a cache driver node
-     *
-     * @param string $name
+     * Return a storage driver node
      *
      * @return ArrayNodeDefinition
      */
-    private function getCacheDriverNode($name)
+    private function getStorageDriverNode()
     {
         $treeBuilder = new TreeBuilder();
-        $node = $treeBuilder->root($name);
+        $node = $treeBuilder->root('storage');
 
         $node
             ->addDefaultsIfNotSet()
@@ -66,7 +69,36 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->validate()
                 ->ifTrue(function($v) { return 'file' === $v['type'] && empty($v['dir']); })
-                ->thenInvalid('The directory of the file cache must be set if using the file cache driver')
+                ->thenInvalid('The directory of the file storage must be set if using the file storage driver')
+            ->end()
+        ;
+
+        return $node;
+    }
+
+    /**
+     * Return a cache driver node
+     *
+     * @return ArrayNodeDefinition
+     */
+    private function getCacheDriverNode()
+    {
+        $treeBuilder = new TreeBuilder();
+        $node = $treeBuilder->root('cache');
+
+        $node
+            ->addDefaultsIfNotSet()
+            ->beforeNormalization()
+            ->ifString()
+            ->then(function($v) { return array('type' => $v); })
+            ->end()
+            ->children()
+            ->scalarNode('type')->defaultValue('memory')->end()
+            ->scalarNode('dir')->defaultValue('%kernel.root_dir%/wurfl')->end()
+            ->end()
+            ->validate()
+            ->ifTrue(function($v) { return 'file' === $v['type'] && empty($v['dir']); })
+            ->thenInvalid('The directory of the file cache must be set if using the file cache driver')
             ->end()
         ;
 

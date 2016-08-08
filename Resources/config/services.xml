@@ -5,14 +5,18 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="acf_wurfl.config.class">WURFL_Configuration_InMemoryConfig</parameter>
-        <parameter key="acf_wurfl.manager_factory.class">WURFL_WURFLManagerFactory</parameter>
+        <parameter key="acf_wurfl.container.class">ScientiaMobile\WURFL\Container\Container</parameter>
+        <parameter key="acf_wurfl.engine.class">ScientiaMobile\WURFL\WURFLEngine</parameter>
+        <parameter key="acf_wurfl.storage_factory.class">ScientiaMobile\WURFL\Storage\StorageFactory</parameter>
+        <parameter key="acf_wurfl.cache_factory.class">ScientiaMobile\WURFL\Cache\CacheFactory</parameter>
     </parameters>
 
     <services>
-        <service id="acf_wurfl.config" class="%acf_wurfl.config.class%"/>
-        <service id="acf_wurfl.manager_factory" class="%acf_wurfl.manager_factory.class%">
-            <argument type="service" id="acf_wurfl.config" />
+        <service id="acf_wurfl.storage_factory" class="%acf_wurfl.storage_factory.class%" public="false"/>
+        <service id="acf_wurfl.cache_factory" class="%acf_wurfl.cache_factory.class%" public="false"/>
+        <service id="acf_wurfl.container" class="%acf_wurfl.container.class%" public="false"/>
+        <service id="acf_wurfl.engine" class="%acf_wurfl.engine.class%" public="false">
+            <argument type="service" id="acf_wurfl.container"/>
         </service>
     </services>
 

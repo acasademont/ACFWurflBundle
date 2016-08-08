@@ -12,6 +12,7 @@
 namespace ACF\Bundle\WurflBundle\Tests;
 
 use ACF\Bundle\WurflBundle\DependencyInjection\ACFWurflExtension;
+use ScientiaMobile\WURFL\Repositories\RepositoryManager;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
@@ -25,20 +26,19 @@ class ACFWurflExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container = $this->createCompiledContainerForConfig($config);
 
-        $this->assertInstanceOf('WURFL_Configuration_InMemoryConfig', $container->get('acf_wurfl.config'));
-        $this->assertEquals(__DIR__ . '/Resources/wurfl/wurfl_base.xml', $container->get('acf_wurfl.config')->wurflFile);
-        $this->assertEquals('performance', $container->get('acf_wurfl.config')->matchMode);
-        $cache = $container->get('acf_wurfl.config')->cache;
-        $this->assertEquals('file', $cache['provider']);
-        $this->assertEquals($container->getParameter('kernel.root_dir') . '/wurfl', $cache['params']['dir']);
-        $persistence = $container->get('acf_wurfl.config')->persistence;
-        $this->assertEquals('file', $persistence['provider']);
-        $this->assertEquals($container->getParameter('kernel.root_dir') . '/wurfl', $persistence['params']['dir']);
+        $this->assertInstanceOf('ScientiaMobile\WURFL\Container\Container', $container->get('acf_wurfl.container'));
+        RepositoryManager::build($container->get('acf_wurfl.container'));
+        $this->assertEquals(__DIR__ . '/Resources/wurfl/wurfl_base.xml', $container->get('acf_wurfl.container')->get('settings')['wurfl_db']);
+        $this->assertTrue($container->get('acf_wurfl')->isPerformanceModeEnabled());
+        $storage = $container->get('acf_wurfl.container')->get('storage');
+        $this->assertInstanceOf('ScientiaMobile\WURFL\Storage\FileStorage', $storage);
+        $cache = $container->get('acf_wurfl.container')->get('cache');
+        $this->assertInstanceOf('ScientiaMobile\WURFL\Cache\MemoryCache', $cache);
 
 
-        $this->assertInstanceOf('WURFL_WURFLManager', $container->get('acf_wurfl'));
-        $this->assertEquals('www.wurflpro.com - 2010-06-03 11:55:51', $container->get('acf_wurfl')->getWURFLInfo()->version);
-        $this->assertEquals('generic_web_browser', $container->get('acf_wurfl')->getDeviceForUserAgent('Mozilla/4.0')->id);
+        $this->assertInstanceOf('ScientiaMobile\WURFL\WURFLEngine', $container->get('acf_wurfl'));
+        $this->assertEquals('WURFL PHP API 1.8.0.2 with WURFL DB for WURFL API 1.8.0.0 evaluation, db.scientiamobile.com - 2016-06-17 15:30:14', $container->get('acf_wurfl')->getVersion());
+        $this->assertEquals('generic_web_browser', $container->get('acf_wurfl')->getDeviceForUserAgent('Firefox')->id);
     }
 
     public function testApcCache()
@@ -92,7 +92,6 @@ class ACFWurflExtensionTest extends \PHPUnit_Framework_TestCase
         } catch (\Exception $e) {
             $this->assertInstanceOf('Symfony\Component\Config\Definition\Exception\InvalidConfigurationException', $e);
             $this->assertEquals('Invalid configuration for path "acf_wurfl.match_mode": The match mode has to be "performance" or "accuracy"', $e->getMessage());
-
         }
     }
 
@@ -107,7 +106,6 @@ class ACFWurflExtensionTest extends \PHPUnit_Framework_TestCase
         } catch (\Exception $e) {
             $this->assertInstanceOf('InvalidArgumentException', $e);
             $this->assertEquals('Invalid handler type "not_valid" given', $e->getMessage());
-
         }
     }
 

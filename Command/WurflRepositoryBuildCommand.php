@@ -39,7 +39,7 @@ class WurflRepositoryBuildCommand extends ContainerAwareCommand
     {
         $container = $this->getContainer();
         //Empty the current repository dir
-        $persistence = $container->get('acf_wurfl.config')->persistence;
+        $persistence = $container->get('acf_wurfl.container')->persistence;
         $repositoryDir = $persistence['params']['dir'];
         if (is_dir($repositoryDir)) {
             $output->writeln('<info>Clearing the old repository</info>');
