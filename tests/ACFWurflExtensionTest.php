@@ -96,6 +96,17 @@ class ACFWurflExtensionTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function testMemoryHandler()
+    {
+        $config = array(
+            'cache'   => 'memory',
+        );
+
+        $container = $this->createCompiledContainerForConfig($config);
+        $cache = $container->get('acf_wurfl.config')->cache;
+        $this->assertEquals('memory', $cache['provider']);
+    }
+
     public function testInvalidHandler()
     {
         $config = array(

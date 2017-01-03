@@ -48,6 +48,7 @@ class ACFWurflExtension extends Extension
                 break;
             case 'apc':
             case 'apcu':
+            case 'memory':
                 return array($config['type'], array());
                 break;
             default:
